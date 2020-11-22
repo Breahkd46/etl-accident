@@ -1,6 +1,6 @@
 from psycopg2 import *
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from src.environment import *
+from environment import *
 
 if __name__ == "__main__":
     con = connect(f"user={DATABASE_USER} password='{DATABASE_PASSWORD}' host={DATABASE_HOST}")

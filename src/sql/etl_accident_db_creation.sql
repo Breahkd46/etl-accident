@@ -2,13 +2,14 @@
 
 -- CREATE DATABASE etl_accident;
 
-
+-- On va peut etre remove
 CREATE TABLE Department
 (
     id                  INT PRIMARY KEY NOT NULL,
     name                VARCHAR(100)
 );
 
+-- On va peut etre remove
 CREATE TABLE Town
 (
     id                  INT PRIMARY KEY NOT NULL,
@@ -18,6 +19,7 @@ CREATE TABLE Town
     FOREIGN KEY (dept)          REFERENCES Department(id)
 );
 
+-- Ok mais manque town a voir si on enleve pas tout ce qui depend de town
 CREATE TABLE Location
 (
     id                  INT PRIMARY KEY NOT NULL,
@@ -29,12 +31,14 @@ CREATE TABLE Location
     FOREIGN KEY (town)            REFERENCES Town(id)
 );
 
+-- Ok
 CREATE TABLE VehicleType
 (
     id                  INT PRIMARY KEY NOT NULL,
     name                VARCHAR(100)
 );
 
+-- Ok
 -- Categories :
 -- 1 – Conducteur
 -- 2 – Passager
@@ -45,12 +49,14 @@ CREATE TABLE UserCategory
     name                VARCHAR(100)
 );
 
+-- Ok
 CREATE TABLE Gravity
 (
     id                  INT PRIMARY KEY NOT NULL,
     name                VARCHAR(100)
 );
 
+-- Ok
 CREATE TABLE UserType
 (
     id                  INT PRIMARY KEY NOT NULL,
@@ -64,24 +70,27 @@ CREATE TABLE UserType
     FOREIGN KEY (user_category)   REFERENCES UserCategory(id)
 );
 
+-- Ok
 CREATE TABLE LumCondition
 (
     id                  INT PRIMARY KEY NOT NULL,
     name                VARCHAR(100)
 );
 
+-- Ok
 CREATE TABLE Surface
 (
     id                  INT PRIMARY KEY NOT NULL,
     name                VARCHAR(100)
 );
-
+-- Ok
 CREATE TABLE AtmosphericCondition
 (
     id                  INT PRIMARY KEY NOT NULL,
     name                VARCHAR(100)
 );
 
+-- Ok
 CREATE TABLE WeatherCondition
 (
     id                  INT PRIMARY KEY NOT NULL,
