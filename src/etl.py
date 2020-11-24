@@ -67,9 +67,7 @@ def transform_places(data):
     print("transform places")
     column_to_save = ['Num_Acc', 'surf']
     column_to_drop = [ele for ele in HEADER_PLACES if ele not in column_to_save]
-
     data.drop(columns=column_to_drop, inplace=True)
-
     data["Num_Acc"] = data["Num_Acc"].apply(formater_Num_Acc)
     data["surf"] = data["surf"].apply(formater_surf)
 
@@ -116,8 +114,8 @@ def load_vehicles(data):
         accident, created = Accident.get_or_create(num_acc=row["Num_Acc"])
         accident.veh_type = row["catv"]
         accident.save()
-        if index > 100:
-            break
+        # if index > 100:
+        #     break
     print("END LOAD vehicles")
 
 def load_users(data):
@@ -136,8 +134,8 @@ def load_users(data):
                                            )
         accident.user_type = user_type.id
         accident.save()
-        if index > 100:
-            break
+        # if index > 100:
+        #     break
     print("END LOAD users")
 
 
@@ -148,6 +146,7 @@ def load_places(data):
 
     for index, row in data.iterrows():
         # print(f"row : {row['Num_Acc']}")
+        # print(row['surf'])
         accident, created = Accident.get_or_create(num_acc=row["Num_Acc"])
         try:
             weather_cond = WeatherCondition.get(id=accident.weather_cond)
@@ -158,8 +157,8 @@ def load_places(data):
             accident.weather_cond = weather_cond.id
             accident.save()
 
-        if index > 100:
-            break
+        # if index > 100:
+        #     break
     print("END LOAD places")
 
 
@@ -186,8 +185,8 @@ def load_characteristics(data):
         location, created = Location.get_or_create(dept=row["dep"], lat=row["lat"], long=row["long"])
         accident.location = location.id
         accident.save()
-        if index > 100:
-            break
+        # if index > 100:
+        #     break
     print("END LOAD characteristics")
 
 

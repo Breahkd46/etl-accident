@@ -13,7 +13,7 @@ def formater_catv(x):
         x = int(x)
     except:
         return 0
-    if 0 > x > 99:
+    if 0 > x or x > 99:
         return 0
     else:
         return x
@@ -27,7 +27,7 @@ def formater_place(x):
         x = int(x)
     except:
         return 0
-    if 0 > x > 9:
+    if 0 > x or x > 9:
         return 0
     else:
         return x
@@ -38,7 +38,7 @@ def formater_catu(x):
         x = int(x)
     except:
         return 0
-    if 0 > x > 3:
+    if 0 > x or x > 3:
         return 0
     else:
         return x
@@ -48,7 +48,7 @@ def formater_grav(x):
         x = int(x)
     except:
         return 0
-    if 0 > x > 4:
+    if 0 > x or x > 4:
         return 0
     else:
         return x
@@ -58,7 +58,7 @@ def formater_sexe(x):
         x = int(x)
     except:
         return 0
-    if 0 > x > 2:
+    if 0 > x or x > 2:
         return 0
     else:
         return x
@@ -78,7 +78,7 @@ def formater_surf(x):
         x = int(x)
     except:
         return -1
-    if 1 > x > 9:
+    if 1 > x or x > 9:
         return -1
     else:
         return x
@@ -103,7 +103,7 @@ def formater_atm(x):
         x = int(x)
     except:
         return -1
-    if 1 > x > 9:
+    if 1 > x or x > 9:
         return -1
     else:
         return x
