@@ -16,20 +16,19 @@ class BaseModel(Model):
 
 
 class Department(BaseModel):
-    id = IntegerField(primary_key=True)
+    id = CharField(primary_key=True, unique=True)
     name = CharField()
 
 
-class Town(BaseModel):
-    id = IntegerField(primary_key=True)
-    dept = ForeignKeyField(Department)
-    name = CharField()
+# class Town(BaseModel):
+#     id = IntegerField(primary_key=True)
+#     dept = ForeignKeyField(Department)
+#     name = CharField()
 
 
 class Location(BaseModel):
-    id = IntegerField(primary_key=True)
-    town = ForeignKeyField(Town)
-    adr = CharField()
+    id = AutoField(primary_key=True)
+    dept = ForeignKeyField(Department, column_name="dept")
     long = IntegerField()
     lat = IntegerField()
 
@@ -50,12 +49,12 @@ class Gravity(BaseModel):
 
 
 class UserType(BaseModel):
-    id = IntegerField(primary_key=True)
+    id = AutoField(primary_key=True)
     place = IntegerField()
     sex = IntegerField()
     birth_year = IntegerField()
-    gravity = ForeignKeyField(Gravity)
-    user_category = ForeignKeyField(UserCategory)
+    gravity = ForeignKeyField(Gravity, column_name="gravity")
+    user_category = ForeignKeyField(UserCategory, column_name="user_category")
 
 
 class LumCondition(BaseModel):
@@ -74,16 +73,17 @@ class AtmosphericCondition(BaseModel):
 
 
 class WeatherCondition(BaseModel):
-    id = IntegerField(primary_key=True)
-    surface = ForeignKeyField(Surface)
-    atm = ForeignKeyField(AtmosphericCondition)
+    id = AutoField(primary_key=True)
+    surface = ForeignKeyField(Surface, column_name="surface")
+    atm = ForeignKeyField(AtmosphericCondition, column_name="atm")
 
 
 class Accident(BaseModel):
-    id = IntegerField(primary_key=True)
-    weather_condition = ForeignKeyField(WeatherCondition)
-    user_type = ForeignKeyField(UserType)
-    lum = ForeignKeyField(LumCondition)
-    veh_type = ForeignKeyField(VehicleType)
+    num_acc = IntegerField(primary_key=True)
+    weather_cond = ForeignKeyField(WeatherCondition, column_name="weather_cond")
+    user_type = ForeignKeyField(UserType, column_name="user_type")
+    lum = ForeignKeyField(LumCondition, column_name="lum")
+    veh_type = ForeignKeyField(VehicleType, column_name="veh_type")
+    location = ForeignKeyField(Location, column_name="location")
     year = IntegerField()
-    user_number = IntegerField()
+    # user_number = IntegerField()

@@ -5,28 +5,27 @@
 
 CREATE TABLE Department
 (
-    id                  INT PRIMARY KEY NOT NULL,
+    id                  VARCHAR(3) UNIQUE PRIMARY KEY NOT NULL,
     name                VARCHAR(100)
 );
 
-CREATE TABLE Town
-(
-    id                  INT PRIMARY KEY NOT NULL,
-    dept                INT NOT NULL,
-    name                VARCHAR(100),
-
-    FOREIGN KEY (dept)          REFERENCES Department(id)
-);
+-- CREATE TABLE Town
+-- (
+--     id                  INT PRIMARY KEY NOT NULL,
+--     dept                INT NOT NULL,
+--     name                VARCHAR(100),
+--
+--     FOREIGN KEY (dept)          REFERENCES Department(id)
+-- );
 
 CREATE TABLE Location
 (
-    id                  INT PRIMARY KEY NOT NULL,
-    town                INT,
-    adr                 VARCHAR(255),
+    id                  SERIAL PRIMARY KEY NOT NULL,
+    dept                VARCHAR(3),
     long                INT,
     lat                 INT,
 
-    FOREIGN KEY (town)            REFERENCES Town(id)
+    FOREIGN KEY (dept)            REFERENCES Department(id)
 );
 
 CREATE TABLE VehicleType
@@ -53,7 +52,7 @@ CREATE TABLE Gravity
 
 CREATE TABLE UserType
 (
-    id                  INT PRIMARY KEY NOT NULL,
+    id                  SERIAL PRIMARY KEY NOT NULL,
     place               INT,
     gravity             INT,
     sex                 INT,
@@ -84,7 +83,7 @@ CREATE TABLE AtmosphericCondition
 
 CREATE TABLE WeatherCondition
 (
-    id                  INT PRIMARY KEY NOT NULL,
+    id                  SERIAL PRIMARY KEY NOT NULL,
     surface             INT,
     atm                 INT,
 
@@ -94,18 +93,20 @@ CREATE TABLE WeatherCondition
 
 CREATE TABLE Accident
 (
-    num_acc             INT PRIMARY KEY NOT NULL,
+    num_acc             BIGINT PRIMARY KEY NOT NULL,
     weather_cond        INT,
     user_type           INT,
     lum                 INT,
     veh_type            INT,
+    location            INT,
     year                INT,
     user_number         INT,
 
     FOREIGN KEY (weather_cond)    REFERENCES WeatherCondition(id),
     FOREIGN KEY (user_type)       REFERENCES UserType(id),
     FOREIGN KEY (lum)             REFERENCES LumCondition(id),
-    FOREIGN KEY (veh_type)        REFERENCES VehicleType(id)
+    FOREIGN KEY (veh_type)        REFERENCES VehicleType(id),
+    FOREIGN KEY (location)        REFERENCES Location(id)
 );
 
 INSERT INTO VehicleType (id, name) VALUES
@@ -152,17 +153,20 @@ INSERT INTO VehicleType (id, name) VALUES
 
 
 INSERT INTO UserCategory (id, name) VALUES
+    (0, 'Indeterminé'),
     (1, 'Conducteur' ),
     (2, 'Passager'),
     (3, 'Piéton');
 
 INSERT INTO Gravity (id, name) VALUES
+    (0, 'Indeterminé'),
     (1, 'Indemne'),
     (2, 'Tué'),
     (3, 'Blessé hospitalisé'),
     (4, 'Blessé léger');
 
 INSERT INTO LumCondition (id, name) VALUES
+    (0, 'Indeterminé'),
     (1, 'Plein jour'),
     (2, 'Crépuscule ou aube'),
     (3, 'Nuit sans éclairage public'),
