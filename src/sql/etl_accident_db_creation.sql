@@ -18,20 +18,66 @@ CREATE TABLE Department
 --     FOREIGN KEY (dept)          REFERENCES Department(id)
 -- );
 
+
+
+CREATE TABLE LumCondition
+(
+    id                  INT PRIMARY KEY NOT NULL,
+    name                VARCHAR(100)
+);
+
+CREATE TABLE Accident
+(
+    num_acc             BIGINT PRIMARY KEY NOT NULL,
+--     weather_cond        INT,
+--     user_type           INT,
+    lum                 INT,
+--     veh_type            INT,
+--     location            INT,
+    year                INT,
+--     user_number         INT,
+
+--     FOREIGN KEY (weather_cond)    REFERENCES WeatherCondition(id),
+--     FOREIGN KEY (user_type)       REFERENCES UserType(id),
+    FOREIGN KEY (lum)             REFERENCES LumCondition(id)
+--     FOREIGN KEY (veh_type)        REFERENCES VehicleType(id),
+--     FOREIGN KEY (location)        REFERENCES Location(id)
+);
 CREATE TABLE Location
 (
     id                  SERIAL PRIMARY KEY NOT NULL,
     dept                VARCHAR(3),
     long                INT,
     lat                 INT,
+    num_acc             BIGINT,
 
-    FOREIGN KEY (dept)            REFERENCES Department(id)
+    FOREIGN KEY (dept)            REFERENCES Department(id),
+    FOREIGN KEY (num_acc)         REFERENCES Accident(num_acc)
 );
 
-CREATE TABLE VehicleType
+CREATE TABLE Surface
 (
     id                  INT PRIMARY KEY NOT NULL,
     name                VARCHAR(100)
+);
+
+CREATE TABLE AtmosphericCondition
+(
+    id                  INT PRIMARY KEY NOT NULL,
+    name                VARCHAR(100)
+);
+
+CREATE TABLE WeatherCondition
+(
+    id                  SERIAL PRIMARY KEY NOT NULL,
+    surface             INT,
+    atm                 INT,
+    num_acc             BIGINT,
+
+    FOREIGN KEY (surface)         REFERENCES Surface(id),
+    FOREIGN KEY (atm)             REFERENCES AtmosphericCondition(id),
+    FOREIGN KEY (num_acc)         REFERENCES Accident(num_acc)
+--     UNIQUE (surface, atm)
 );
 
 -- Categories :
@@ -58,55 +104,27 @@ CREATE TABLE UserType
     sex                 INT,
     birth_year          INT,
     user_category       INT,
+    num_acc             BIGINT,
 
     FOREIGN KEY (gravity)         REFERENCES Gravity(id),
-    FOREIGN KEY (user_category)   REFERENCES UserCategory(id)
+    FOREIGN KEY (user_category)   REFERENCES UserCategory(id),
+    FOREIGN KEY (num_acc)         REFERENCES Accident(num_acc)
 );
 
-CREATE TABLE LumCondition
+CREATE TABLE VehicleType
 (
     id                  INT PRIMARY KEY NOT NULL,
     name                VARCHAR(100)
 );
 
-CREATE TABLE Surface
+CREATE TABLE Accident_VehType
 (
-    id                  INT PRIMARY KEY NOT NULL,
-    name                VARCHAR(100)
-);
+    num_acc             BIGINT,
+    codeVehType         INT,
 
-CREATE TABLE AtmosphericCondition
-(
-    id                  INT PRIMARY KEY NOT NULL,
-    name                VARCHAR(100)
-);
-
-CREATE TABLE WeatherCondition
-(
-    id                  SERIAL PRIMARY KEY NOT NULL,
-    surface             INT,
-    atm                 INT,
-
-    FOREIGN KEY (surface)         REFERENCES Surface(id),
-    FOREIGN KEY (atm)             REFERENCES AtmosphericCondition(id)
-);
-
-CREATE TABLE Accident
-(
-    num_acc             BIGINT PRIMARY KEY NOT NULL,
-    weather_cond        INT,
-    user_type           INT,
-    lum                 INT,
-    veh_type            INT,
-    location            INT,
-    year                INT,
-    user_number         INT,
-
-    FOREIGN KEY (weather_cond)    REFERENCES WeatherCondition(id),
-    FOREIGN KEY (user_type)       REFERENCES UserType(id),
-    FOREIGN KEY (lum)             REFERENCES LumCondition(id),
-    FOREIGN KEY (veh_type)        REFERENCES VehicleType(id),
-    FOREIGN KEY (location)        REFERENCES Location(id)
+    FOREIGN KEY (num_acc) REFERENCES Accident(num_acc),
+    FOREIGN KEY (codeVehType) REFERENCES VehicleType(id)
+--     UNIQUE (num_acc, codeVehType)
 );
 
 INSERT INTO VehicleType (id, name) VALUES

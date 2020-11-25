@@ -25,24 +25,24 @@ INPUT_DATA_GOUV_URL = [
             }
         ]
     },
-    {
-        "year": 2017,
-        "urls": [
-            {
-                "type": "vehicles",
-                "url": "https://www.data.gouv.fr/fr/datasets/r/d6103d0c-6db5-466f-b724-91cbea521533"
-            }, {
-                "type": "users",
-                "url": "https://www.data.gouv.fr/fr/datasets/r/07bfe612-0ad9-48ef-92d3-f5466f8465fe"
-            }, {
-                "type": "places",
-                "url": "https://www.data.gouv.fr/fr/datasets/r/9b76a7b6-3eef-4864-b2da-1834417e305c"
-            }, {
-                "type": "characteristics",
-                "url": "https://www.data.gouv.fr/fr/datasets/r/9a7d408b-dd72-4959-ae7d-c854ec505354"
-            }
-        ]
-    }
+    # {
+    #     "year": 2017,
+    #     "urls": [
+    #         {
+    #             "type": "vehicles",
+    #             "url": "https://www.data.gouv.fr/fr/datasets/r/d6103d0c-6db5-466f-b724-91cbea521533"
+    #         }, {
+    #             "type": "users",
+    #             "url": "https://www.data.gouv.fr/fr/datasets/r/07bfe612-0ad9-48ef-92d3-f5466f8465fe"
+    #         }, {
+    #             "type": "places",
+    #             "url": "https://www.data.gouv.fr/fr/datasets/r/9b76a7b6-3eef-4864-b2da-1834417e305c"
+    #         }, {
+    #             "type": "characteristics",
+    #             "url": "https://www.data.gouv.fr/fr/datasets/r/9a7d408b-dd72-4959-ae7d-c854ec505354"
+    #         }
+    #     ]
+    # }
 ]
 
 HEADER_VEHICLES = ['Num_Acc', 'senc', 'catv', 'occutc', 'obs', 'obsm', 'choc', 'manv', 'num_veh']

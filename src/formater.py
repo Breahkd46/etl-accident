@@ -4,6 +4,7 @@ def formater_Num_Acc(x):
     except:
         return 0
 
+
 ######################
 # Vehicle
 ######################
@@ -17,6 +18,7 @@ def formater_catv(x):
         return 0
     else:
         return x
+
 
 ######################
 # User
@@ -43,6 +45,7 @@ def formater_catu(x):
     else:
         return x
 
+
 def formater_grav(x):
     try:
         x = int(x)
@@ -52,6 +55,7 @@ def formater_grav(x):
         return 0
     else:
         return x
+
 
 def formater_sexe(x):
     try:
@@ -63,11 +67,13 @@ def formater_sexe(x):
     else:
         return x
 
+
 def formater_an(x):
     try:
         return int(x)
     except:
         return 0
+
 
 ######################
 # Places
@@ -82,6 +88,7 @@ def formater_surf(x):
         return -1
     else:
         return x
+
 
 ######################
 # Characteristic
@@ -119,12 +126,19 @@ def formater_lat(x):
     else:
         return x
 
+
 def formater_dept(x):
     try:
         x = int(x)
     except:
-        return x
-    if 970 < x:
-        return str(x)
-    else:
-        return str(int(x /10))
+        if x == "2A" or x == "2B":
+            return x
+        else:
+            return "00"
+    if x <= 970:
+        x = int(x / 10)
+    if x < 10:
+        x = "0" + str(x)
+    elif x == 20:
+        x = "00"
+    return str(x)

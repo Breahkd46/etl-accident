@@ -6,6 +6,8 @@ from src.environment import *
 from src.formater import *
 from src.model import *
 
+from sqlalchemy import create_engine
+
 
 def extract(url, type):
     print(f"Fetch for {type} at : {url}")
@@ -42,9 +44,14 @@ def transform_vehicles(data):
 
     data.drop(columns=column_to_drop, inplace=True)
 
-    data["Num_Acc"] = data["Num_Acc"].apply(formater_Num_Acc)
-    data["catv"] = data["catv"].apply(formater_catv)
-    return data
+    data.rename(columns={'Num_Acc': 'num_acc', 'catv': 'codevehtype'}, inplace=True)
+
+    data["num_acc"] = data["num_acc"].apply(formater_Num_Acc)
+    data["codevehtype"] = data["codevehtype"].apply(formater_catv)
+
+    # Filter
+    data_out = data[(data['num_acc'] != 0)]
+    return data_out
 
 
 def transform_users(data):
@@ -54,24 +61,40 @@ def transform_users(data):
 
     data.drop(columns=column_to_drop, inplace=True)
 
-    data["Num_Acc"] = data["Num_Acc"].apply(formater_Num_Acc)
+    data.rename(columns={'Num_Acc': 'num_acc',
+                         'catu': 'user_category',
+                         'grav': 'gravity',
+                         'sexe': 'sex',
+                         'an_nais': 'birth_year'}, inplace=True)
+
+    data["num_acc"] = data["num_acc"].apply(formater_Num_Acc)
     data["place"] = data["place"].apply(formater_place)
-    data["catu"] = data["catu"].apply(formater_catu)
-    data["grav"] = data["grav"].apply(formater_grav)
-    data["sexe"] = data["sexe"].apply(formater_sexe)
-    data["an_nais"] = data["an_nais"].apply(formater_an)
-    return data
+    data["user_category"] = data["user_category"].apply(formater_catu)
+    data["gravity"] = data["gravity"].apply(formater_grav)
+    data["sex"] = data["sex"].apply(formater_sexe)
+    data["birth_year"] = data["birth_year"].apply(formater_an)
+
+    # Filter
+    data_out = data[(data['num_acc'] != 0)]
+    return data_out
 
 
 def transform_places(data):
     print("transform places")
     column_to_save = ['Num_Acc', 'surf']
     column_to_drop = [ele for ele in HEADER_PLACES if ele not in column_to_save]
-    data.drop(columns=column_to_drop, inplace=True)
-    data["Num_Acc"] = data["Num_Acc"].apply(formater_Num_Acc)
-    data["surf"] = data["surf"].apply(formater_surf)
 
-    return data
+    data.drop(columns=column_to_drop, inplace=True)
+
+    data.rename(columns={'Num_Acc': 'num_acc',
+                         'surf': 'surface'}, inplace=True)
+
+    data["num_acc"] = data["num_acc"].apply(formater_Num_Acc)
+    data["surface"] = data["surface"].apply(formater_surf)
+
+    # Filter
+    data_out = data[(data['num_acc'] != 0)]
+    return data_out
 
 
 def transform_characteristics(data):
@@ -82,15 +105,64 @@ def transform_characteristics(data):
 
     data.drop(columns=column_to_drop, inplace=True)
 
-    data["Num_Acc"] = data["Num_Acc"].apply(formater_Num_Acc)
-    data["an"] = data["an"].apply(formater_an)
+    data.rename(columns={'Num_Acc': 'num_acc',
+                         'an': 'year',
+                         'dep': 'dept'}, inplace=True)
+
+    data["num_acc"] = data["num_acc"].apply(formater_Num_Acc)
+    data["year"] = data["year"].apply(formater_an)
     data["lum"] = data["lum"].apply(formater_lum)
     data["atm"] = data["atm"].apply(formater_atm)
     data["lat"] = data["lat"].apply(formater_lat)
     data["long"] = data["long"].apply(formater_lat)
-    data["dep"] = data["dep"].apply(formater_dept)
+    data["dept"] = data["dept"].apply(formater_dept)
 
-    return data
+    # Filter
+    data_out = data[(data['num_acc'] != 0)]
+    return data_out
+
+
+def loader(vehicles, users, places, characteristics):
+    print("Transform ALL")
+
+    location = characteristics.drop(columns=['year', 'lum', 'atm'])
+    weathercondition = characteristics.drop(columns=['year', 'lum', 'lat', 'long', 'dept']) \
+        .join(places.set_index('num_acc'), on='num_acc')
+    accident = characteristics.drop(columns=['atm', 'lat', 'long', 'dept'])
+    accident_vehtype = vehicles
+    usertype = users
+
+    print("accident")
+    load_to_postgresql(accident, "accident")
+
+    print("location")
+    load_to_postgresql(location, "location")
+
+    print("weathercondition")
+    load_to_postgresql(weathercondition, "weathercondition")
+
+    print("accident_vehtype")
+    load_to_postgresql(accident_vehtype, "accident_vehtype")
+
+    print("usertype")
+    load_to_postgresql(usertype, "usertype")
+
+
+def load_to_postgresql(data, table):
+    alchemyEngine = create_engine('postgresql+psycopg2://root:root@127.0.0.1/etl_accident', pool_recycle=3600)
+
+    postgreSQLConnection = alchemyEngine.connect()
+
+    try:
+        frame = data.to_sql(table, postgreSQLConnection, if_exists='append', index=False)
+    except ValueError as vx:
+        print(vx)
+    except Exception as ex:
+        print(ex)
+    else:
+        print("PostgreSQL Table %s has been created successfully." % table)
+    finally:
+        postgreSQLConnection.close()
 
 
 def load(input, type):
@@ -118,6 +190,7 @@ def load_vehicles(data):
         #     break
     print("END LOAD vehicles")
 
+
 def load_users(data):
     print("load users")
     # print(data)
@@ -127,11 +200,11 @@ def load_users(data):
         # print(f"row : {row['Num_Acc']}")
         accident, created = Accident.get_or_create(num_acc=row["Num_Acc"])
         user_type, uCreated = UserType.get_or_create(place=row["place"],
-                                           user_category=row["catu"],
-                                           gravity=row["grav"],
-                                           sex=row["sexe"],
-                                           birth_year=row["an_nais"]
-                                           )
+                                                     user_category=row["catu"],
+                                                     gravity=row["grav"],
+                                                     sex=row["sexe"],
+                                                     birth_year=row["an_nais"]
+                                                     )
         accident.user_type = user_type.id
         accident.save()
         # if index > 100:
@@ -194,6 +267,7 @@ if __name__ == "__main__":
     for input in INPUT_DATA_GOUV_URL:
         year = input.get("year")
         print(year)
+        dict = {}
         for input_url in input.get("urls"):
             url = input_url.get("url")
             type = input_url.get("type")
@@ -202,4 +276,6 @@ if __name__ == "__main__":
 
             data = transform(data, type)
 
-            load(data, type)
+            dict[type] = data
+            # load(data, type)
+        loader(dict['vehicles'], dict['users'], dict['places'], dict['characteristics'])
