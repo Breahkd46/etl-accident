@@ -16,7 +16,7 @@ l'entrepot de données.
 * pip
 
 ## Structure
-
+raw
 4 fichier principaux : 
 * etl_accidnet.py permet de lancé le programme 
 de création de données et le processus d'ETL
@@ -42,4 +42,4 @@ une base de données PostrgreSQL
 
 ## Schema
 
-![Schema sql](https://github.com/Breahkd46/etl_accident/raw/master/doc/etl_accident.png "Schema sql")
+![Schema sql](https://github.com/Breahkd46/etl-accident/blob/master/doc/etl_accident.png "Schema sql")
