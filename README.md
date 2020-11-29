@@ -39,3 +39,7 @@ une base de données PostrgreSQL
 >`pip install -r requirements.txt`
 >
 >`python src/etl_accident.py`
+
+## Schema
+
+![Schema sql](https://github.com/Breahkd46/etl_accident/raw/master/doc/etl_accident.png "Schema sql")
