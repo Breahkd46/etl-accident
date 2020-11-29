@@ -9,15 +9,6 @@ CREATE TABLE Department
     name                VARCHAR(100)
 );
 
--- CREATE TABLE Town
--- (
---     id                  INT PRIMARY KEY NOT NULL,
---     dept                INT NOT NULL,
---     name                VARCHAR(100),
---
---     FOREIGN KEY (dept)          REFERENCES Department(id)
--- );
-
 
 
 CREATE TABLE LumCondition
@@ -29,19 +20,9 @@ CREATE TABLE LumCondition
 CREATE TABLE Accident
 (
     num_acc             BIGINT PRIMARY KEY NOT NULL,
---     weather_cond        INT,
---     user_type           INT,
     lum                 INT,
---     veh_type            INT,
---     location            INT,
     year                INT,
---     user_number         INT,
-
---     FOREIGN KEY (weather_cond)    REFERENCES WeatherCondition(id),
---     FOREIGN KEY (user_type)       REFERENCES UserType(id),
     FOREIGN KEY (lum)             REFERENCES LumCondition(id)
---     FOREIGN KEY (veh_type)        REFERENCES VehicleType(id),
---     FOREIGN KEY (location)        REFERENCES Location(id)
 );
 CREATE TABLE Location
 (
@@ -77,7 +58,6 @@ CREATE TABLE WeatherCondition
     FOREIGN KEY (surface)         REFERENCES Surface(id),
     FOREIGN KEY (atm)             REFERENCES AtmosphericCondition(id),
     FOREIGN KEY (num_acc)         REFERENCES Accident(num_acc)
---     UNIQUE (surface, atm)
 );
 
 -- Categories :
@@ -124,7 +104,6 @@ CREATE TABLE Accident_VehType
 
     FOREIGN KEY (num_acc) REFERENCES Accident(num_acc),
     FOREIGN KEY (codeVehType) REFERENCES VehicleType(id)
---     UNIQUE (num_acc, codeVehType)
 );
 
 INSERT INTO VehicleType (id, name) VALUES

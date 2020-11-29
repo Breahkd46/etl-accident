@@ -3,7 +3,8 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from src.environment import *
 from src.load_departement import load_dept
 
-if __name__ == "__main__":
+
+def db_creation():
     con = connect(f"user={DATABASE_USER} password='{DATABASE_PASSWORD}' host={DATABASE_HOST}")
     con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = con.cursor()
@@ -31,3 +32,7 @@ if __name__ == "__main__":
     print("LOAD DEPARTMENT")
 
     load_dept()
+
+
+if __name__ == "__main__":
+    db_creation()

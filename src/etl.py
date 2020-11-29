@@ -2,6 +2,7 @@ import csv
 import pandas
 import requests
 
+from src.db_creation import db_creation
 from src.environment import *
 from src.formater import *
 from src.model import *
@@ -149,7 +150,9 @@ def loader(vehicles, users, places, characteristics):
 
 
 def load_to_postgresql(data, table):
-    alchemyEngine = create_engine('postgresql+psycopg2://root:root@127.0.0.1/etl_accident', pool_recycle=3600)
+    alchemyEngine = create_engine(
+        f"postgresql+psycopg2://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}/{DATABASE_NAME}",
+        pool_recycle=3600)
 
     postgreSQLConnection = alchemyEngine.connect()
 
@@ -165,105 +168,7 @@ def load_to_postgresql(data, table):
         postgreSQLConnection.close()
 
 
-def load(input, type):
-    if type == "vehicles":
-        load_vehicles(input)
-    elif type == "users":
-        load_users(input)
-    elif type == "places":
-        load_places(input)
-    elif type == "characteristics":
-        load_characteristics(input)
-    else:
-        print(f"no type defined for : {type}")
-
-
-def load_vehicles(data):
-    print("load vehicles")
-    # print(data)
-    for index, row in data.iterrows():
-        # print(f"row : {row['Num_Acc']}")
-        accident, created = Accident.get_or_create(num_acc=row["Num_Acc"])
-        accident.veh_type = row["catv"]
-        accident.save()
-        # if index > 100:
-        #     break
-    print("END LOAD vehicles")
-
-
-def load_users(data):
-    print("load users")
-    # print(data)
-    # ['Num_Acc', 'place', 'catu', 'grav', 'sexe', 'an_nais']
-
-    for index, row in data.iterrows():
-        # print(f"row : {row['Num_Acc']}")
-        accident, created = Accident.get_or_create(num_acc=row["Num_Acc"])
-        user_type, uCreated = UserType.get_or_create(place=row["place"],
-                                                     user_category=row["catu"],
-                                                     gravity=row["grav"],
-                                                     sex=row["sexe"],
-                                                     birth_year=row["an_nais"]
-                                                     )
-        accident.user_type = user_type.id
-        accident.save()
-        # if index > 100:
-        #     break
-    print("END LOAD users")
-
-
-def load_places(data):
-    print("load places")
-
-    # ['Num_Acc', 'surf']
-
-    for index, row in data.iterrows():
-        # print(f"row : {row['Num_Acc']}")
-        # print(row['surf'])
-        accident, created = Accident.get_or_create(num_acc=row["Num_Acc"])
-        try:
-            weather_cond = WeatherCondition.get(id=accident.weather_cond)
-            weather_cond.surface = row["surf"]
-            weather_cond.save()
-        except DoesNotExist:
-            weather_cond = WeatherCondition.create(surface=row["surf"])
-            accident.weather_cond = weather_cond.id
-            accident.save()
-
-        # if index > 100:
-        #     break
-    print("END LOAD places")
-
-
-def load_characteristics(data):
-    print("load characteristics")
-
-    # ['Num_Acc', 'an', 'lum', 'atm', 'lat', 'long', 'dep']
-
-    for index, row in data.iterrows():
-        # print(f"row : {row['Num_Acc']}")
-        # print(f"Dept {row['dep']}")
-        accident, created = Accident.get_or_create(num_acc=row["Num_Acc"])
-        if accident.weather_cond is not None:
-            weather_cond = WeatherCondition.get(id=accident.weather_cond)
-            weather_cond.atm = row["atm"]
-            weather_cond.save()
-        else:
-            weather_cond = WeatherCondition.create(surface=row["atm"])
-            accident.weather_cond = weather_cond.id
-
-        accident.year = row["an"]
-        accident.lum = row["lum"]
-
-        location, created = Location.get_or_create(dept=row["dep"], lat=row["lat"], long=row["long"])
-        accident.location = location.id
-        accident.save()
-        # if index > 100:
-        #     break
-    print("END LOAD characteristics")
-
-
-if __name__ == "__main__":
+def etl_accident():
     for input in INPUT_DATA_GOUV_URL:
         year = input.get("year")
         print(year)
@@ -277,5 +182,9 @@ if __name__ == "__main__":
             data = transform(data, type)
 
             dict[type] = data
-            # load(data, type)
         loader(dict['vehicles'], dict['users'], dict['places'], dict['characteristics'])
+
+
+if __name__ == "__main__":
+    db_creation()
+    etl_accident()
