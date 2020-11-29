@@ -1,7 +1,7 @@
 from psycopg2 import *
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from src.environment import *
-from src.load_departement import load_dept
+from src.tools.load_departement import load_dept
 
 
 def db_creation():
@@ -22,7 +22,7 @@ def db_creation():
     print(f"APPLY SCHEMA ...")
 
     conn = connect(f"dbname={DATABASE_NAME} user={DATABASE_USER} password='{DATABASE_PASSWORD}' host={DATABASE_HOST}")
-    sql_file = open('sql/etl_accident_db_creation.sql', 'r')
+    sql_file = open('../sql/etl_accident_db_creation.sql', 'r')
     conn.cursor().execute(sql_file.read())
     conn.commit()
     conn.close()
